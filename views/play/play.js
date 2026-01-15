@@ -44,43 +44,87 @@ let score = 0;
 
 // Hide a given element
 function hide(element) {
+  // TODO
   element.style.display = "none";
 }
 
 function show(element) {
+  // TODO
   element.style.display = "block";
 }
 
 function onStart() {
   // Render the current question
-  // Display the quiz view,
-  hide(dom_start)
-  hide(dom_score)
+  renderQuestion();
+
+  // Display the quiz view
+  hide(dom_start);
+  hide(dom_score);
   show(dom_quiz);
-  renderQuestion(runningQuestionIndex++);
+
 }
 
 function renderQuestion(questionIndex) {
   // Render the current question on the quiz view
-  dom_question.textContent = questions[questionIndex].title;
-  dom_choiceA.textContent = questions[questionIndex].choiceA;
-  dom_choiceB.textContent = questions[questionIndex].choiceB;
-  dom_choiceC.textContent = questions[questionIndex].choiceC;
-  dom_choiceD.textContent = questions[questionIndex].choiceD;
- 
+  let q = questions[runningQuestionIndex];
+  dom_question.textContent = q.title;
+  dom_choiceA.textContent = q.choiceA;
+  dom_choiceB.textContent = q.choiceB;
+  dom_choiceC.textContent = q.choiceC;
+  dom_choiceD.textContent = q.choiceD;
 }
 
 function onPlayerSubmit(answer) {
   // Update the score, display the next question or the score view
+  
+  if (answer === questions[runningQuestionIndex].correct) {
+    score++;
+  }
+  
+  if (runningQuestionIndex < questions.length - 1 ) {
+    runningQuestionIndex++;
+    renderQuestion();
+  } else {
+    renderScore();
+  }
 }
 
-function renderSCore() {
+function renderScore() {
   // calculate the amount of question percent answered by the user
   // choose the image based on the scorePerCent
+  hide(dom_quiz);
+  show(dom_score);
+
+  // calculate score percent
+  const scorePercent = Math.round((100 * score) / questions.length);
+  
+  // display emoji based on scorePercent
+  let comment = "";
+  if (scorePercent <= 20) {
+    comment = "HUMM !";
+    image = "../../img/20.png";
+  } else if (scorePercent <= 40) {
+    comment = "YOU CAN IMPROVE !";
+    image = "../../img/40.png";
+  } else if (scorePercent <= 60) {
+    comment = "NOT BAD !";
+    image = "../../img/60.png";
+  } else if (scorePercent <= 80) {
+    comment = "GOOD !";
+    image = "../../img/80.png";
+  } else {
+    comment = "AMAZING !";
+    image = "../../img/100.png";
+  }
+
+  dom_score.innerHTML = `
+    <img src="${image}" style="display:block; margin:auto;" />
+    <h2 style="text-align:center;" >${comment}</h2>
+    <p style="text-align:center;">Your score is ${scorePercent}%</p>
+  `;
 }
 
 // FUNCTIONS ---------------------------------------------------------
 show(dom_start);
 hide(dom_quiz);
 hide(dom_score);
-
